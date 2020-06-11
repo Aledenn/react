@@ -44,6 +44,7 @@ export function forwardRef<Props, ElementType: React$ElementType>(
   }
 
   const elementType = {
+    // 改变$$typeof 应该在渲染时候使用到
     $$typeof: REACT_FORWARD_REF_TYPE,
     render,
   };
