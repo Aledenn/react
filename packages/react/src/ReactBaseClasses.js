@@ -17,6 +17,7 @@ if (__DEV__) {
 /**
  * Base class helpers for the updating state of a component.
  */
+// updater是react-dom注入的
 function Component(props, context, updater) {
   this.props = props;
   this.context = context;
@@ -27,6 +28,7 @@ function Component(props, context, updater) {
   this.updater = updater || ReactNoopUpdateQueue;
 }
 
+// 有一个flag
 Component.prototype.isReactComponent = {};
 
 /**
@@ -134,6 +136,7 @@ function PureComponent(props, context, updater) {
   this.updater = updater || ReactNoopUpdateQueue;
 }
 
+// 减少一层原型链搜查
 const pureComponentPrototype = (PureComponent.prototype = new ComponentDummy());
 pureComponentPrototype.constructor = PureComponent;
 // Avoid an extra prototype jump for these methods.
