@@ -14,6 +14,7 @@ export function createRef(): RefObject {
     current: null,
   };
   if (__DEV__) {
+    // 封闭，只能改，不能删除等，https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/seal
     Object.seal(refObject);
   }
   return refObject;
