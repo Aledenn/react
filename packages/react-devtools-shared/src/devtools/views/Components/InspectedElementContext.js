@@ -188,7 +188,7 @@ function InspectedElementContextController({children}: Props) {
 
               resource.write(element, inspectedElement);
 
-              // Schedule update with React if the curently-selected element has been invalidated.
+              // Schedule update with React if the currently-selected element has been invalidated.
               if (id === selectedElementID) {
                 setCurrentlyInspectedElement(inspectedElement);
               }
@@ -198,7 +198,11 @@ function InspectedElementContextController({children}: Props) {
         case 'full-data':
           const {
             canEditFunctionProps,
+            canEditFunctionPropsDeletePaths,
+            canEditFunctionPropsRenamePaths,
             canEditHooks,
+            canEditHooksAndDeletePaths,
+            canEditHooksAndRenamePaths,
             canToggleSuspense,
             canViewSource,
             hasLegacyContext,
@@ -217,7 +221,11 @@ function InspectedElementContextController({children}: Props) {
 
           const inspectedElement: InspectedElementFrontend = {
             canEditFunctionProps,
+            canEditFunctionPropsDeletePaths,
+            canEditFunctionPropsRenamePaths,
             canEditHooks,
+            canEditHooksAndDeletePaths,
+            canEditHooksAndRenamePaths,
             canToggleSuspense,
             canViewSource,
             hasLegacyContext,
@@ -263,7 +271,7 @@ function InspectedElementContextController({children}: Props) {
             } else {
               resource.write(element, inspectedElement);
 
-              // Schedule update with React if the curently-selected element has been invalidated.
+              // Schedule update with React if the currently-selected element has been invalidated.
               if (id === selectedElementID) {
                 setCurrentlyInspectedElement(inspectedElement);
               }

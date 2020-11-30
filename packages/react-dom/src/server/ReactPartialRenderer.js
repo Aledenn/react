@@ -23,7 +23,6 @@ import {
   disableModulePatternComponents,
   enableSuspenseServerRenderer,
   enableFundamentalAPI,
-  enableDeprecatedFlareAPI,
   enableScopeAPI,
 } from 'shared/ReactFeatureFlags';
 
@@ -60,6 +59,7 @@ import escapeTextForBrowser from './escapeTextForBrowser';
 import {
   prepareToUseHooks,
   finishHooks,
+  resetHooksState,
   Dispatcher,
   currentPartialRenderer,
   setCurrentPartialRenderer,
@@ -114,7 +114,7 @@ if (__DEV__) {
   validatePropertiesInDevelopment = function(type, props) {
     validateARIAProperties(type, props);
     validateInputProperties(type, props);
-    validateUnknownProperties(type, props, /* canUseEventSystem */ false);
+    validateUnknownProperties(type, props, null);
   };
 
   describeStackFrame = function(element): string {
@@ -367,9 +367,6 @@ function createOpenTagMarkup(
     if (!hasOwnProperty.call(props, propKey)) {
       continue;
     }
-    if (enableDeprecatedFlareAPI && propKey === 'DEPRECATED_flareListeners') {
-      continue;
-    }
     let propValue = props[propKey];
     if (propValue == null) {
       continue;
@@ -594,7 +591,7 @@ function resolve(
               console.warn(
                 // keep this warning in sync with ReactStrictModeWarning.js
                 'componentWillMount has been renamed, and is not recommended for use. ' +
-                  'See https://fb.me/react-unsafe-component-lifecycles for details.\n\n' +
+                  'See https://reactjs.org/link/unsafe-component-lifecycles for details.\n\n' +
                   '* Move code from componentWillMount to componentDidMount (preferred in most cases) ' +
                   'or the constructor.\n' +
                   '\nPlease update the following components: %s',
@@ -955,6 +952,7 @@ class ReactDOMServerRenderer {
     } finally {
       ReactCurrentDispatcher.current = prevDispatcher;
       setCurrentPartialRenderer(prevPartialRenderer);
+      resetHooksState();
     }
   }
 
@@ -1105,6 +1103,31 @@ class ReactDOMServerRenderer {
           } else {
             invariant(false, 'ReactDOMServer does not yet support Suspense.');
           }
+        }
+        // eslint-disable-next-line-no-fallthrough
+        case REACT_SCOPE_TYPE: {
+          if (enableScopeAPI) {
+            const nextChildren = toArray(
+              ((nextChild: any): ReactElement).props.children,
+            );
+            const frame: Frame = {
+              type: null,
+              domNamespace: parentNamespace,
+              children: nextChildren,
+              childIndex: 0,
+              context: context,
+              footer: '',
+            };
+            if (__DEV__) {
+              ((frame: any): FrameDev).debugElementStack = [];
+            }
+            this.stack.push(frame);
+            return '';
+          }
+          invariant(
+            false,
+            'ReactDOMServer does not yet support scope components.',
+          );
         }
         // eslint-disable-next-line-no-fallthrough
         default:
@@ -1297,31 +1320,6 @@ class ReactDOMServerRenderer {
             this.stack.push(frame);
             return '';
           }
-          // eslint-disable-next-line-no-fallthrough
-          case REACT_SCOPE_TYPE: {
-            if (enableScopeAPI) {
-              const nextChildren = toArray(
-                ((nextChild: any): ReactElement).props.children,
-              );
-              const frame: Frame = {
-                type: null,
-                domNamespace: parentNamespace,
-                children: nextChildren,
-                childIndex: 0,
-                context: context,
-                footer: '',
-              };
-              if (__DEV__) {
-                ((frame: any): FrameDev).debugElementStack = [];
-              }
-              this.stack.push(frame);
-              return '';
-            }
-            invariant(
-              false,
-              'ReactDOMServer does not yet support scope components.',
-            );
-          }
         }
       }
 
@@ -1400,7 +1398,7 @@ class ReactDOMServerRenderer {
               '(specify either the checked prop, or the defaultChecked prop, but not ' +
               'both). Decide between using a controlled or uncontrolled input ' +
               'element and remove one of these props. More info: ' +
-              'https://fb.me/react-controlled-components',
+              'https://reactjs.org/link/controlled-components',
             'A component',
             props.type,
           );
@@ -1417,7 +1415,7 @@ class ReactDOMServerRenderer {
               '(specify either the value prop, or the defaultValue prop, but not ' +
               'both). Decide between using a controlled or uncontrolled input ' +
               'element and remove one of these props. More info: ' +
-              'https://fb.me/react-controlled-components',
+              'https://reactjs.org/link/controlled-components',
             'A component',
             props.type,
           );
@@ -1450,7 +1448,7 @@ class ReactDOMServerRenderer {
               '(specify either the value prop, or the defaultValue prop, but not ' +
               'both). Decide between using a controlled or uncontrolled textarea ' +
               'and remove one of these props. More info: ' +
-              'https://fb.me/react-controlled-components',
+              'https://reactjs.org/link/controlled-components',
           );
           didWarnDefaultTextareaValue = true;
         }
@@ -1527,7 +1525,7 @@ class ReactDOMServerRenderer {
               '(specify either the value prop, or the defaultValue prop, but not ' +
               'both). Decide between using a controlled or uncontrolled select ' +
               'element and remove one of these props. More info: ' +
-              'https://fb.me/react-controlled-components',
+              'https://reactjs.org/link/controlled-components',
           );
           didWarnDefaultSelectValue = true;
         }

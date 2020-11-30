@@ -26,8 +26,8 @@ It consists of:
 
 1. the total length of next items that belong to string table
 2. for each string in a table:
-  1. encoded size
-  2. a list of its UTF encoded codepoints
+    * encoded size
+    * a list of its UTF encoded codepoints
 
 For example, for `Foo` and `Bar` we would see:
 
@@ -49,26 +49,28 @@ Later operations will reference strings by a one-based index. For example, `1` w
 
 #### Adding a root node
 
-Adding a root to the tree requires sending 4 numbers:
+Adding a root to the tree requires sending 5 numbers:
 
 1. add operation constant (`1`)
 1. fiber id
-1. element type constant (`8 === ElementTypeRoot`)
+1. element type constant (`11 === ElementTypeRoot`)
 1. profiling supported flag
+1. owner metadata flag
 
 For example, adding a root fiber with an id of 1:
 ```js
 [
   1, // add operation
   1, // fiber id
-  8, // ElementTypeRoot
+  11, // ElementTypeRoot
   1, // this root's renderer supports profiling
+  1, // this root has owner metadata
 ]
 ```
 
 #### Adding a leaf node
 
-Adding a leaf node takes a variable number of numbers since we need to decode the name (and potentially the key):
+Adding a leaf node to the tree requires sending 7 numbers:
 
 1. add operation constant (`1`)
 1. fiber id
@@ -86,7 +88,6 @@ For example, adding a function component `<Foo>` with an id 2:
   1,   // ElementTypeClass
   1,   // parent id
   0,   // owner id
-  3,   // encoded display name size
   1,   // id of "Foo" displayName in the string table
   0,   // id of null key in the string table (always zero for null)
 ]

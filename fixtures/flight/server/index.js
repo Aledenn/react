@@ -1,10 +1,14 @@
 'use strict';
 
+const register = require('react-transport-dom-webpack/node-register');
+register();
+
 const babelRegister = require('@babel/register');
 
 babelRegister({
   ignore: [/\/(build|node_modules)\//],
   presets: ['react-app'],
+  plugins: ['@babel/transform-modules-commonjs'],
 });
 
 const express = require('express');
@@ -17,7 +21,7 @@ app.get('/', function(req, res) {
       delete require.cache[key];
     }
   }
-  require('./handler')(req, res);
+  require('./handler.server.js')(req, res);
 });
 
 app.listen(3001, () => {

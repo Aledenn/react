@@ -8,12 +8,16 @@
  */
 
 // Filter certain DOM attributes (e.g. src, href) if their values are empty strings.
-// This prevents e.g. <img src=""> from making an unnecessar HTTP request for certain browsers.
+// This prevents e.g. <img src=""> from making an unnecessary HTTP request for certain browsers.
 export const enableFilterEmptyStringAttributesDOM = false;
 
 // Adds verbose console logging for e.g. state updates, suspense, and work loop stuff.
 // Intended to enable React core members to more easily debug scheduling issues in DEV builds.
 export const enableDebugTracing = false;
+
+// Adds user timing marks for e.g. state updates, suspense, and work loop stuff,
+// for an experimental scheduling profiler tool.
+export const enableSchedulingProfiler = __PROFILE__ && __EXPERIMENTAL__;
 
 // Helps identify side effects in render-phase lifecycle hooks and setState
 // reducers by double invoking them in Strict Mode.
@@ -32,6 +36,13 @@ export const enableProfilerTimer = __PROFILE__;
 // Record durations for commit and passive effects phases.
 export const enableProfilerCommitHooks = false;
 
+// Phase param passed to onRender callback differentiates between an "update" and a "cascading-update".
+export const enableProfilerNestedUpdatePhase = false;
+
+// Profiler API accepts a function to be called when a nested update is scheduled.
+// This callback accepts the component type (class instance or function) the update is scheduled for.
+export const enableProfilerNestedUpdateScheduledHook = false;
+
 // Trace which interactions trigger each commit.
 export const enableSchedulerTracing = __PROFILE__;
 
@@ -40,7 +51,6 @@ export const enableSuspenseServerRenderer = __EXPERIMENTAL__;
 export const enableSelectiveHydration = __EXPERIMENTAL__;
 
 // Flight experiments
-export const enableBlocksAPI = __EXPERIMENTAL__;
 export const enableLazyElements = __EXPERIMENTAL__;
 
 // Only used in www builds.
@@ -48,9 +58,6 @@ export const enableSchedulerDebugging = false;
 
 // Disable javascript: URL strings in href for XSS protection.
 export const disableJavaScriptURLs = false;
-
-// Experimental React Flare event system and event components support.
-export const enableDeprecatedFlareAPI = false;
 
 // Experimental Host Component support.
 export const enableFundamentalAPI = false;
@@ -87,7 +94,7 @@ export const enableTrustedTypesIntegration = false;
 // a deprecated pattern we want to get rid of in the future
 export const warnAboutSpreadingKeyToJSX = false;
 
-export const enableComponentStackLocations = __EXPERIMENTAL__;
+export const enableComponentStackLocations = true;
 
 export const enableNewReconciler = false;
 
@@ -111,16 +118,23 @@ export const disableModulePatternComponents = false;
 // We should remove this flag once the above flag becomes enabled
 export const warnUnstableRenderSubtreeIntoContainer = false;
 
-// Modern event system where events get registered at roots
-export const enableModernEventSystem = false;
-
 // Support legacy Primer support on internal FB www
 export const enableLegacyFBSupport = false;
 
 // Updates that occur in the render phase are not officially supported. But when
-// they do occur, in the new reconciler, we defer them to a subsequent render by
-// picking a lane that's not currently rendering. We treat them the same as if
-// they came from an interleaved event. In the old reconciler, we use whatever
-// expiration time is currently rendering. Remove this flag once we have
-// migrated to the new behavior.
+// they do occur, we defer them to a subsequent render by picking a lane that's
+// not currently rendering. We treat them the same as if they came from an
+// interleaved event. Remove this flag once we have migrated to the
+// new behavior.
 export const deferRenderPhaseUpdateToNextBatch = true;
+
+// Replacement for runWithPriority in React internals.
+export const decoupleUpdatePriorityFromScheduler = false;
+
+export const enableDiscreteEventFlushingChange = false;
+
+export const enableDoubleInvokingEffects = false;
+
+export const enableUseRefAccessWarning = false;
+
+export const enableRecursiveCommitTraversal = false;
